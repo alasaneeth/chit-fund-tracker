@@ -427,3 +427,40 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+# =========================
+# Angular / Node.js
+# =========================
+
+# Node modules
+node_modules/
+
+# Angular build output
+/dist/
+/dist-ssr/
+/out-tsc/
+/build/
+
+# Angular cache
+.angular/
+.cache/
+
+# Environment files
+src/environments/*.local.ts
+.env
+.env.*
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Coverage
+coverage/
+
+# Angular / NX / workspace cache
+.tmp/
+.parcel-cache/
+
+# VS Code Angular workspace
+.angular/cache/
