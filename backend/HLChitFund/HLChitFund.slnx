@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="HLChitFund.API/HLChitFund.API.csproj" />
+  <Project Path="HLChitFund.Application/HLChitFund.Application.csproj" />
+  <Project Path="HLChitFund.Domain/HLChitFund.Domain.csproj" />
+  <Project Path="HLChitFund.Infrastructure/HLChitFund.Infrastructure.csproj" />
+</Solution>
