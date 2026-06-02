@@ -21,6 +21,7 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 // Services
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ICustomerService, CustomerService>();
 
 // JWT Authentication
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
