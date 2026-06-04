@@ -12,6 +12,8 @@ public class AppDbContext : DbContext
 
     public DbSet<User> Users => Set<User>();
     public DbSet<Customer> Customers => Set<Customer>();
+    public DbSet<ChitGroup> ChitGroups => Set<ChitGroup>();
+    public DbSet<Enrollment> Enrollments => Set<Enrollment>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -23,5 +25,24 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<Customer>()
             .HasQueryFilter(c => !c.IsDeleted);
+        modelBuilder.Entity<ChitGroup>()
+            .HasQueryFilter(cg => !cg.IsDeleted);
+
+        modelBuilder.Entity<Enrollment>()
+            .HasQueryFilter(e => !e.IsDeleted);
+
+        // Decimal Precision
+        modelBuilder.Entity<ChitGroup>()
+            .Property(c => c.TotalAmount)
+            .HasPrecision(18, 2);
+
+        modelBuilder.Entity<ChitGroup>()
+            .Property(c => c.MonthlyAmount)
+            .HasPrecision(18, 2);
+
+        modelBuilder.Entity<ChitGroup>()
+            .Property(c => c.CommissionRate)
+            .HasPrecision(5, 2);
+
     }
 }
