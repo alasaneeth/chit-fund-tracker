@@ -6,7 +6,14 @@ using System.Threading.Tasks;
 
 namespace HLChitFund.Application.DTOs.ChitGroup
 {
-    internal class ChitGroupRequestDto
+    public class ChitGroupRequestDto
     {
+        public string Name { get; set; } = string.Empty;
+        public decimal TotalAmount { get; set; }
+        public decimal MonthlyAmount { get; set; }
+        public int DurationMonths { get; set; }
+        public string ChitType { get; set; } = string.Empty;
+        public DateTime StartDate { get; set; }
+        public int MaxMembers { get; set; }
     }
 }

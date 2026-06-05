@@ -1,4 +1,5 @@
 using HLChitFund.Application.Common.Interfaces;
+using HLChitFund.Application.Common.Interfaces.Repositories;
 using HLChitFund.Infrastructure.Data;
 using HLChitFund.Infrastructure.Repositories;
 using HLChitFund.Infrastructure.Services;
@@ -22,6 +23,7 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
+builder.Services.AddScoped<IChitGroupService, ChitGroupService>();
 
 // JWT Authentication
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
