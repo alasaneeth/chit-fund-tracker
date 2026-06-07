@@ -18,8 +18,8 @@ namespace HLChitFund.Domain.Entities
         public DateTime JoinDate { get; set; } = DateTime.UtcNow;
         public bool IsActive { get; set; } = true;
 
-        // Navigation Property
-        //public ICollection<Enrollment> Enrollments { get; set; }
-        //    = new List<Enrollment>();
+        //Navigation Property
+        public ICollection<Enrollment> Enrollments { get; set; }
+            = new List<Enrollment>();
     }
 }

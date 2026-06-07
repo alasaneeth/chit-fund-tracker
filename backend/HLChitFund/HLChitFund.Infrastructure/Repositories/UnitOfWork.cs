@@ -11,12 +11,18 @@ public class UnitOfWork : IUnitOfWork
 
     public IRepository<User> Users { get; private set; }
     public IRepository<Customer> Customers { get; private set; }
+    public IRepository<ChitGroup> ChitGroups { get; private set; }
+    public IRepository<Enrollment> Enrollments { get; private set; }
+
 
     public UnitOfWork(AppDbContext context)
     {
         _context = context;
         Users = new Repository<User>(context);
         Customers = new Repository<Customer>(context);
+        ChitGroups = new Repository<ChitGroup>(context);
+        Enrollments = new Repository<Enrollment>(context);
+
     }
 
     public async Task<int> SaveChangesAsync()
