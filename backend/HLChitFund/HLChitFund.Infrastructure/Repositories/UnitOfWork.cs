@@ -13,6 +13,7 @@ public class UnitOfWork : IUnitOfWork
     public IRepository<Customer> Customers { get; private set; }
     public IRepository<ChitGroup> ChitGroups { get; private set; }
     public IRepository<Enrollment> Enrollments { get; private set; }
+    public IRepository<Payment> Payments { get; private set; }
 
 
     public UnitOfWork(AppDbContext context)
@@ -22,6 +23,7 @@ public class UnitOfWork : IUnitOfWork
         Customers = new Repository<Customer>(context);
         ChitGroups = new Repository<ChitGroup>(context);
         Enrollments = new Repository<Enrollment>(context);
+        Payments = new Repository<Payment>(context);
 
     }
 
