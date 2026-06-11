@@ -14,6 +14,7 @@ public class AppDbContext : DbContext
     public DbSet<Customer> Customers => Set<Customer>();
     public DbSet<ChitGroup> ChitGroups => Set<ChitGroup>();
     public DbSet<Enrollment> Enrollments => Set<Enrollment>();
+    public DbSet<Payment> Payments => Set<Payment>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -43,6 +44,14 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<ChitGroup>()
             .Property(c => c.CommissionRate)
             .HasPrecision(5, 2);
+
+      
+        modelBuilder.Entity<Payment>()
+            .HasQueryFilter(p => !p.IsDeleted);
+
+        modelBuilder.Entity<Payment>()
+            .Property(p => p.AmountPaid)
+            .HasPrecision(18, 2);
 
     }
 }
