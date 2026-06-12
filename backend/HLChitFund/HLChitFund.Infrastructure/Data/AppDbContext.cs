@@ -15,6 +15,8 @@ public class AppDbContext : DbContext
     public DbSet<ChitGroup> ChitGroups => Set<ChitGroup>();
     public DbSet<Enrollment> Enrollments => Set<Enrollment>();
     public DbSet<Payment> Payments => Set<Payment>();
+    public DbSet<Winner> Winners => Set<Winner>();
+    public DbSet<Commission> Commissions => Set<Commission>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -51,6 +53,38 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<Payment>()
             .Property(p => p.AmountPaid)
+            .HasPrecision(18, 2);
+
+        // Winner
+        modelBuilder.Entity<Winner>()
+            .HasQueryFilter(w => !w.IsDeleted);
+
+        modelBuilder.Entity<Winner>()
+            .Property(w => w.PrizeAmount)
+            .HasPrecision(18, 2);
+
+        modelBuilder.Entity<Winner>()
+            .Property(w => w.CommissionDeducted)
+            .HasPrecision(18, 2);
+
+        modelBuilder.Entity<Winner>()
+            .Property(w => w.NetAmount)
+            .HasPrecision(18, 2);
+
+        // Commission
+        modelBuilder.Entity<Commission>()
+            .HasQueryFilter(c => !c.IsDeleted);
+
+        modelBuilder.Entity<Commission>()
+            .Property(c => c.TotalAmount)
+            .HasPrecision(18, 2);
+
+        modelBuilder.Entity<Commission>()
+            .Property(c => c.CommissionRate)
+            .HasPrecision(5, 2);
+
+        modelBuilder.Entity<Commission>()
+            .Property(c => c.CommissionAmount)
             .HasPrecision(18, 2);
 
     }
