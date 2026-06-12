@@ -87,5 +87,37 @@ public class AppDbContext : DbContext
             .Property(c => c.CommissionAmount)
             .HasPrecision(18, 2);
 
+        // Winner — Cascade Delete Fix
+        modelBuilder.Entity<Winner>()
+            .HasOne(w => w.ChitGroup)
+            .WithMany()
+            .HasForeignKey(w => w.ChitGroupId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Winner>()
+            .HasOne(w => w.Customer)
+            .WithMany()
+            .HasForeignKey(w => w.CustomerId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Winner>()
+            .HasOne(w => w.Enrollment)
+            .WithMany()
+            .HasForeignKey(w => w.EnrollmentId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // Commission — Cascade Delete Fix
+        modelBuilder.Entity<Commission>()
+            .HasOne(c => c.ChitGroup)
+            .WithMany()
+            .HasForeignKey(c => c.ChitGroupId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Commission>()
+            .HasOne(c => c.Winner)
+            .WithMany()
+            .HasForeignKey(c => c.WinnerId)
+            .OnDelete(DeleteBehavior.Restrict);
+
     }
 }

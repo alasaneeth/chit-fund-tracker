@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HLChitFund.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260612021731_AddWinnerAndCommissionTables")]
+    [Migration("20260612022050_AddWinnerAndCommissionTables")]
     partial class AddWinnerAndCommissionTables
     {
         /// <inheritdoc />
@@ -394,13 +394,13 @@ namespace HLChitFund.Infrastructure.Migrations
                     b.HasOne("HLChitFund.Domain.Entities.ChitGroup", "ChitGroup")
                         .WithMany()
                         .HasForeignKey("ChitGroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("HLChitFund.Domain.Entities.Winner", "Winner")
                         .WithMany()
                         .HasForeignKey("WinnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("ChitGroup");
@@ -443,19 +443,19 @@ namespace HLChitFund.Infrastructure.Migrations
                     b.HasOne("HLChitFund.Domain.Entities.ChitGroup", "ChitGroup")
                         .WithMany()
                         .HasForeignKey("ChitGroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("HLChitFund.Domain.Entities.Customer", "Customer")
                         .WithMany()
                         .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("HLChitFund.Domain.Entities.Enrollment", "Enrollment")
                         .WithMany()
                         .HasForeignKey("EnrollmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("ChitGroup");
