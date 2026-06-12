@@ -9,5 +9,7 @@ public interface IUnitOfWork : IDisposable
     IRepository<Domain.Entities.ChitGroup> ChitGroups { get; }
     IRepository<Domain.Entities.Enrollment> Enrollments { get; }
     IRepository<Domain.Entities.Payment> Payments { get; }
+    IRepository<Domain.Entities.Winner> Winners { get; } 
+    IRepository<Domain.Entities.Commission> Commissions { get; }
     Task<int> SaveChangesAsync();
 }
