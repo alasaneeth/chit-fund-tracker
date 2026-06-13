@@ -86,6 +86,7 @@ public class WinnerService : IWinnerService
         };
 
         await _unitOfWork.Winners.AddAsync(winner);
+        await _unitOfWork.SaveChangesAsync();
 
         enrollment.HasWon = true;
         _unitOfWork.Enrollments.Update(enrollment);
