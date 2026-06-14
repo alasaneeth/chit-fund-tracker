@@ -15,6 +15,8 @@ public class UnitOfWork : IUnitOfWork
     public IRepository<Enrollment> Enrollments { get; private set; }
     public IRepository<Payment> Payments { get; private set; }
 
+    public IRepository<Winner> Winners { get; private set; }
+    public IRepository<Commission> Commissions { get; private set; }
 
     public UnitOfWork(AppDbContext context)
     {
@@ -24,6 +26,8 @@ public class UnitOfWork : IUnitOfWork
         ChitGroups = new Repository<ChitGroup>(context);
         Enrollments = new Repository<Enrollment>(context);
         Payments = new Repository<Payment>(context);
+        Winners = new Repository<Winner>(context);
+        Commissions = new Repository<Commission>(context);
 
     }
 
