@@ -54,6 +54,17 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
+// CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngular", policy =>
+    {
+        policy.WithOrigins("http://localhost:4200")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 // Controllers
 builder.Services.AddControllers();
 
@@ -99,6 +110,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("AllowAngular");
 
 app.UseHttpsRedirection();
 app.UseAuthentication();
