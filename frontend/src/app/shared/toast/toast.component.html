@@ -1,0 +1,9 @@
+<div class="toast-container" *ngIf="toast()">
+  <div class="toast" [ngClass]="toast()!.type">
+    <mat-icon>
+      {{ toast()!.type === 'success' ? 'check_circle' :
+         toast()!.type === 'error' ? 'error' : 'warning' }}
+    </mat-icon>
+    <span>{{ toast()!.message }}</span>
+  </div>
+</div>

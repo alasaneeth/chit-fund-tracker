@@ -34,7 +34,8 @@
           "skipTests": true
         },
         "@schematics/angular:service": {
-          "skipTests": true
+          "skipTests": true,
+           "type": "component"
         }
       },
       "root": "",

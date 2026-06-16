@@ -85,3 +85,12 @@
     </div>
   </div>
 </div>
+
+<!-- Confirm Delete Dialog -->
+<app-confirm-dialog
+  *ngIf="showDeleteConfirm"
+  title="Delete Customer"
+  message="இந்த customer-ஐ delete பண்ண விரும்புகிறீர்களா? இந்த action undo பண்ண முடியாது."
+  (confirmed)="confirmDelete()"
+  (cancelled)="showDeleteConfirm = false">
+</app-confirm-dialog>
