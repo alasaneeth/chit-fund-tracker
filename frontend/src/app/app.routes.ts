@@ -26,12 +26,12 @@ export const routes: Routes = [
           import('./features/dashboard/dashboard.component')
             .then(m => m.DashboardComponent)
       },
-      // {
-      //   path: 'customer',
-      //   loadComponent: () =>
-      //     import('./features/customer/customer.component')
-      //       .then(m => m.CustomerComponent)
-      // },
+      {
+        path: 'customer',
+        loadComponent: () =>
+          import('./features/customer/customer.component')
+            .then(m => m.CustomerComponent)
+      },
       // {
       //   path: 'chit-group',
       //   loadComponent: () =>
