@@ -32,12 +32,12 @@ export const routes: Routes = [
           import('./features/customer/customer.component')
             .then(m => m.CustomerComponent)
       },
-      // {
-      //   path: 'chit-group',
-      //   loadComponent: () =>
-      //     import('./features/chit-group/chit-group.component')
-      //       .then(m => m.ChitGroupComponent)
-      // },
+      {
+        path: 'chit-group',
+        loadComponent: () =>
+          import('./features/chit-group/chit-group.component')
+            .then(m => m.ChitGroupComponent)
+      },
       // {
       //   path: 'payment',
       //   loadComponent: () =>

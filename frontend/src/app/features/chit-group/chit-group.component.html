@@ -1,0 +1,126 @@
+<div class="chit-group-page">
+  <div class="page-header">
+    <h2>Chit Groups</h2>
+    <button class="add-btn" (click)="openAdd()">
+      <mat-icon>add_circle</mat-icon>
+      Add Chit Group
+    </button>
+  </div>
+
+  <div class="search-bar">
+    <mat-icon>search</mat-icon>
+    <input
+      type="text"
+      placeholder="Search by name..."
+      [(ngModel)]="searchText"
+    />
+  </div>
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Total Amount</th>
+          <th>Monthly</th>
+          <th>Members</th>
+          <th>Duration</th>
+          <th>Start Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let group of filteredChitGroups; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{ group.name }}</td>
+          <td><span class="badge">{{ group.chitType }}</span></td>
+          <td>Rs{{ group.totalAmount | number }}</td>
+          <td>Rs{{ group.monthlyAmount | number }}</td>
+          <td>{{ group.maxMembers }}</td>
+          <td>{{ group.durationMonths }} months</td>
+          <td>{{ group.startDate | date:'dd/MM/yyyy' }}</td>
+          <td class="actions">
+            <button class="edit-btn" (click)="openEdit(group)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button class="delete-btn" (click)="delete(group.id!)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="filteredChitGroups.length === 0">
+          <td colspan="9" class="empty">No chit groups found.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Form Modal -->
+  <div class="modal-overlay" *ngIf="showForm">
+    <div class="modal">
+      <h3>{{ isEdit ? 'Edit Chit Group' : 'Add Chit Group' }}</h3>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Name*</label>
+          <input type="text" [(ngModel)]="form.name" placeholder="Enter group name" />
+        </div>
+        <div class="form-group">
+          <label>Chit Type*</label>
+          <select [(ngModel)]="form.chitType">
+            <option *ngFor="let type of chitTypes" [value]="type.value">
+              {{ type.label }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Total Amount*</label>
+          <input type="number" [(ngModel)]="form.totalAmount" placeholder="Enter total amount" />
+        </div>
+        <div class="form-group">
+          <label>Monthly Contribution*</label>
+          <input type="number" [(ngModel)]="form.monthlyAmount" placeholder="Enter monthly amount" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Total Members*</label>
+          <input type="number" [(ngModel)]="form.maxMembers" placeholder="Enter total members" />
+        </div>
+        <div class="form-group">
+          <label>Duration (Months)*</label>
+          <input type="number" [(ngModel)]="form.durationMonths" placeholder="Enter duration" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Start Date*</label>
+          <input type="date" [(ngModel)]="form.startDate" />
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="cancel-btn" (click)="cancel()">Cancel</button>
+        <button class="save-btn" (click)="save()">
+          {{ isEdit ? 'Update' : 'Save' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm Delete -->
+  <app-confirm-dialog
+    *ngIf="showDeleteConfirm"
+    title="Delete Chit Group"
+    message="இந்த Chit Group-ஐ delete பண்ண விரும்புகிறீர்களா?"
+    (confirmed)="confirmDelete()"
+    (cancelled)="showDeleteConfirm = false">
+  </app-confirm-dialog>
+</div>
