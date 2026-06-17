@@ -44,12 +44,12 @@ export const routes: Routes = [
       //     import('./features/payment/payment.component')
       //       .then(m => m.PaymentComponent)
       // },
-      // {
-      //   path: 'enrollment',
-      //   loadComponent: () =>
-      //     import('./features/enrollment/enrollment.component')
-      //       .then(m => m.EnrollmentComponent)
-      // },
+      {
+        path: 'enrollment',
+        loadComponent: () =>
+          import('./features/enrollment/enrollment.component')
+            .then(m => m.EnrollmentComponent)
+      },
       // {
       //   path: 'winner',
       //   loadComponent: () =>
