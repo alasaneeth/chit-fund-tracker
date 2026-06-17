@@ -38,12 +38,12 @@ export const routes: Routes = [
           import('./features/chit-group/chit-group.component')
             .then(m => m.ChitGroupComponent)
       },
-      // {
-      //   path: 'payment',
-      //   loadComponent: () =>
-      //     import('./features/payment/payment.component')
-      //       .then(m => m.PaymentComponent)
-      // },
+      {
+        path: 'payment',
+        loadComponent: () =>
+          import('./features/payment/payment.component')
+            .then(m => m.PaymentComponent)
+      },
       {
         path: 'enrollment',
         loadComponent: () =>

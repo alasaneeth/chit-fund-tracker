@@ -1,0 +1,122 @@
+<div class="payment-page">
+  <div class="page-header">
+    <h2>Payments</h2>
+    <button class="add-btn" (click)="openAdd()">
+      <mat-icon>add_card</mat-icon>
+      Add Payment
+    </button>
+  </div>
+
+  <div class="search-bar">
+    <mat-icon>search</mat-icon>
+    <input
+      type="text"
+      placeholder="Search by customer, group or receipt..."
+      [(ngModel)]="searchText"
+    />
+  </div>
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Receipt No</th>
+          <th>Customer</th>
+          <th>Chit Group</th>
+          <th>Month</th>
+          <th>Amount</th>
+          <th>Mode</th>
+          <th>Paid Date</th>
+          <th>Late</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let payment of filteredPayments; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td><span class="receipt">{{ payment.receiptNumber }}</span></td>
+          <td>{{ payment.customerName || 'Enrollment #' + payment.enrollmentId }}</td>
+          <td>{{ payment.chitGroupName || '-' }}</td>
+          <td>{{ payment.monthNumber }}</td>
+          <td>₹{{ payment.amountPaid | number }}</td>
+          <td><span class="badge mode">{{ payment.paymentMode }}</span></td>
+          <td>{{ payment.paidDate | date:'dd/MM/yyyy' }}</td>
+          <td>
+            <span class="badge" [ngClass]="payment.isLate ? 'late' : 'ontime'">
+              {{ payment.isLate ? 'Late' : 'On Time' }}
+            </span>
+          </td>
+          <td class="actions">
+            <button class="edit-btn" (click)="openEdit(payment)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button class="delete-btn" (click)="delete(payment.id!)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="filteredPayments.length === 0">
+          <td colspan="10" class="empty">No payments found.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Form Modal -->
+  <div class="modal-overlay" *ngIf="showForm">
+    <div class="modal">
+      <h3>{{ isEdit ? 'Edit Payment' : 'Add Payment' }}</h3>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Enrollment*</label>
+          <select [(ngModel)]="form.enrollmentId">
+            <option value="0" disabled>Select Enrollment</option>
+            <option *ngFor="let e of enrollments" [value]="e.id">
+              Enrollment #{{ e.id }} — Slot {{ e.slotNumber }}
+            </option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Payment Mode*</label>
+          <select [(ngModel)]="form.paymentMode">
+            <option *ngFor="let mode of paymentModes" [value]="mode">{{ mode }}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Month Number*</label>
+          <input type="number" [(ngModel)]="form.monthNumber" placeholder="Enter month number" />
+        </div>
+        <div class="form-group">
+          <label>Amount Paid*</label>
+          <input type="number" [(ngModel)]="form.amountPaid" placeholder="Enter amount" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Notes</label>
+        <input type="text" [(ngModel)]="form.notes" placeholder="Enter notes (optional)" />
+      </div>
+
+      <div class="modal-actions">
+        <button class="cancel-btn" (click)="cancel()">Cancel</button>
+        <button class="save-btn" (click)="save()">
+          {{ isEdit ? 'Update' : 'Save' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm Delete -->
+  <app-confirm-dialog
+    *ngIf="showDeleteConfirm"
+    title="Delete Payment"
+    message="இந்த Payment-ஐ delete பண்ண விரும்புகிறீர்களா?"
+    (confirmed)="confirmDelete()"
+    (cancelled)="showDeleteConfirm = false">
+  </app-confirm-dialog>
+</div>
