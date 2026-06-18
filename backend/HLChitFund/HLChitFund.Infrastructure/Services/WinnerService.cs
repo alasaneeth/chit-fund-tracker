@@ -19,10 +19,14 @@ public class WinnerService : IWinnerService
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<IEnumerable<WinnerResponseDto>>
-        GetAllWinnersAsync()
+    public async Task<IEnumerable<WinnerResponseDto>> GetAllWinnersAsync()
     {
-        var winners = await _unitOfWork.Winners.GetAllAsync();
+        var winners = await _unitOfWork.Winners
+            .GetAllAsync(
+                w => w.Customer,
+                w => w.ChitGroup,
+                w => w.Enrollment
+            );
         return winners.Select(MapToResponse);
     }
 

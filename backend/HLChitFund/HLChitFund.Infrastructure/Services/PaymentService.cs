@@ -13,10 +13,14 @@ public class PaymentService : IPaymentService
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<IEnumerable<PaymentResponseDto>>
-        GetAllPaymentsAsync()
+    public async Task<IEnumerable<PaymentResponseDto>> GetAllPaymentsAsync()
     {
-        var payments = await _unitOfWork.Payments.GetAllAsync();
+        var payments = await _unitOfWork.Payments
+            .GetAllAsync(
+                p => p.Enrollment,
+                p => p.Enrollment.Customer,
+                p => p.Enrollment.ChitGroup
+            );
         return payments.Select(MapToResponse);
     }
 

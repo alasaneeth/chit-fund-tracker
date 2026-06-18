@@ -1,0 +1,116 @@
+<div class="enrollment-page">
+  <div class="page-header">
+    <h2>Enrollments</h2>
+    <button class="add-btn" (click)="openAdd()">
+      <mat-icon>how_to_reg</mat-icon>
+      Add Enrollment
+    </button>
+  </div>
+
+  <div class="search-bar">
+    <mat-icon>search</mat-icon>
+    <input
+      type="text"
+      placeholder="Search by customer or chit group..."
+      [(ngModel)]="searchText"
+    />
+  </div>
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Customer</th>
+          <th>Chit Group</th>
+          <th>Slot Number</th>
+          <th>Join Date</th>
+          <th>Status</th>
+          <th>Won</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let enrollment of filteredEnrollments; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{ enrollment.customerName || 'Customer #' + enrollment.customerId }}</td>
+          <td>{{ enrollment.chitGroupName || 'Group #' + enrollment.chitGroupId }}</td>
+          <td>{{ enrollment.slotNumber }}</td>
+          <td>{{ enrollment.joinDate | date:'dd/MM/yyyy' }}</td>
+          <td>
+            <span class="badge" [ngClass]="enrollment.isActive ? 'active' : 'inactive'">
+              {{ enrollment.isActive ? 'Active' : 'Inactive' }}
+            </span>
+          </td>
+          <td>
+            <span class="badge" [ngClass]="enrollment.hasWon ? 'won' : 'pending'">
+              {{ enrollment.hasWon ? 'Won' : 'Pending' }}
+            </span>
+          </td>
+          <td class="actions">
+            <button class="edit-btn" (click)="openEdit(enrollment)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button class="delete-btn" (click)="delete(enrollment.id!)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="filteredEnrollments.length === 0">
+          <td colspan="8" class="empty">No enrollments found.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Form Modal -->
+  <div class="modal-overlay" *ngIf="showForm">
+    <div class="modal">
+      <h3>{{ isEdit ? 'Edit Enrollment' : 'Add Enrollment' }}</h3>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Customer*</label>
+          <select [(ngModel)]="form.customerId">
+            <option value="0" disabled>Select Customer</option>
+            <option *ngFor="let customer of customers" [value]="customer.id">
+              {{ customer.fullName }}
+            </option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Chit Group*</label>
+          <select [(ngModel)]="form.chitGroupId">
+            <option value="0" disabled>Select Chit Group</option>
+            <option *ngFor="let group of chitGroups" [value]="group.id">
+              {{ group.name }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Slot Number*</label>
+          <input type="number" [(ngModel)]="form.slotNumber" placeholder="Enter slot number" />
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="cancel-btn" (click)="cancel()">Cancel</button>
+        <button class="save-btn" (click)="save()">
+          {{ isEdit ? 'Update' : 'Save' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm Delete -->
+  <app-confirm-dialog
+    *ngIf="showDeleteConfirm"
+    title="Delete Enrollment"
+    message="இந்த Enrollment-ஐ delete பண்ண விரும்புகிறீர்களா?"
+    (confirmed)="confirmDelete()"
+    (cancelled)="showDeleteConfirm = false">
+  </app-confirm-dialog>
+</div>

@@ -1,0 +1,49 @@
+.navbar {
+  height: 64px;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.page-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1565c0;
+  margin: 0;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  mat-icon {
+    font-size: 32px;
+    width: 32px;
+    height: 32px;
+    color: #1565c0;
+  }
+
+  .user-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+  }
+
+  .user-role {
+    font-size: 12px;
+    color: white;
+    background: #1565c0;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-weight: 500;
+  }
+}

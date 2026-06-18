@@ -1,6 +1,7 @@
 ﻿using HLChitFund.Application.Common.Interfaces;
 using HLChitFund.Application.DTOs.Enrollment;
 using HLChitFund.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace HLChitFund.Infrastructure.Services;
 
@@ -13,11 +14,10 @@ public class EnrollmentService : IEnrollmentService
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<IEnumerable<EnrollmentResponseDto>>
-        GetAllEnrollmentsAsync()
+    public async Task<IEnumerable<EnrollmentResponseDto>> GetAllEnrollmentsAsync()
     {
         var enrollments = await _unitOfWork.Enrollments
-            .GetAllAsync();
+            .GetAllAsync(e => e.Customer, e => e.ChitGroup);
         return enrollments.Select(MapToResponse);
     }
 
