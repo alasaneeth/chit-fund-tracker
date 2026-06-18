@@ -1,0 +1,40 @@
+<div class="sidebar">
+  <div class="sidebar-header">
+    <span class="logo-icon">🏦</span>
+    <span class="logo-text">HLChitFund</span>
+  </div>
+
+  <nav class="sidebar-nav">
+    <a routerLink="/dashboard" routerLinkActive="active" class="nav-item">
+      <mat-icon>dashboard</mat-icon>
+      <span>Dashboard</span>
+    </a>
+    <a routerLink="/chit-group" routerLinkActive="active" class="nav-item">
+      <mat-icon>group_work</mat-icon>
+      <span>Chit Groups</span>
+    </a>
+    <a routerLink="/customer" routerLinkActive="active" class="nav-item">
+      <mat-icon>people</mat-icon>
+      <span>Customers</span>
+    </a>
+    <a routerLink="/payment" routerLinkActive="active" class="nav-item">
+      <mat-icon>payments</mat-icon>
+      <span>Payments</span>
+    </a>
+    <a routerLink="/enrollment" routerLinkActive="active" class="nav-item">
+      <mat-icon>how_to_reg</mat-icon>
+      <span>Enrollments</span>
+    </a>
+    <a routerLink="/winner" routerLinkActive="active" class="nav-item">
+      <mat-icon>emoji_events</mat-icon>
+      <span>Winners</span>
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <button class="logout-btn" (click)="onLogout()">
+      <mat-icon>logout</mat-icon>
+      <span>Logout</span>
+    </button>
+  </div>
+</div>

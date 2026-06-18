@@ -1,0 +1,13 @@
+<div class="modal-overlay">
+  <div class="confirm-modal">
+    <div class="confirm-icon">
+      <mat-icon>warning_amber</mat-icon>
+    </div>
+    <h3>{{ title }}</h3>
+    <p>{{ message }}</p>
+    <div class="modal-actions">
+      <button class="cancel-btn" (click)="cancelled.emit()">Cancel</button>
+      <button class="delete-btn" (click)="confirmed.emit()">Confirm</button>
+    </div>
+  </div>
+</div>
