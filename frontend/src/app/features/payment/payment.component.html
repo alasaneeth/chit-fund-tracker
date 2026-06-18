@@ -39,7 +39,7 @@
           <td>{{ payment.customerName || 'Enrollment #' + payment.enrollmentId }}</td>
           <td>{{ payment.chitGroupName || '-' }}</td>
           <td>{{ payment.monthNumber }}</td>
-          <td>₹{{ payment.amountPaid | number }}</td>
+          <td>Rs{{ payment.amountPaid | number }}</td>
           <td><span class="badge mode">{{ payment.paymentMode }}</span></td>
           <td>{{ payment.paidDate | date:'dd/MM/yyyy' }}</td>
           <td>

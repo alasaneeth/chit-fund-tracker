@@ -50,12 +50,12 @@ export const routes: Routes = [
           import('./features/enrollment/enrollment.component')
             .then(m => m.EnrollmentComponent)
       },
-      // {
-      //   path: 'winner',
-      //   loadComponent: () =>
-      //     import('./features/winner/winner.component')
-      //       .then(m => m.WinnerComponent)
-      // }
+      {
+        path: 'winner',
+        loadComponent: () =>
+          import('./features/winner/winner.component')
+            .then(m => m.WinnerComponent)
+      }
     ]
   },
   {

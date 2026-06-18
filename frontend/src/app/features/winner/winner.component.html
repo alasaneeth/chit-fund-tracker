@@ -1,0 +1,152 @@
+<div class="winner-page">
+  <div class="page-header">
+    <h2>Winners</h2>
+    <button class="add-btn" (click)="openAdd()">
+      <mat-icon>emoji_events</mat-icon>
+      Add Winner
+    </button>
+  </div>
+
+  <div class="search-bar">
+    <mat-icon>search</mat-icon>
+    <input
+      type="text"
+      placeholder="Search by customer, group or type..."
+      [(ngModel)]="searchText"
+    />
+  </div>
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Customer</th>
+          <th>Chit Group</th>
+          <th>Month</th>
+          <th>Prize Amount</th>
+          <th>Commission</th>
+          <th>Net Amount</th>
+          <th>Selection Type</th>
+          <th>Won Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let winner of filteredWinners; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{ winner.customerName || 'Customer #' + winner.customerId }}</td>
+          <td>{{ winner.chitGroupName || 'Group #' + winner.chitGroupId }}</td>
+          <td>{{ winner.monthNumber }}</td>
+          <td>Rs{{ winner.prizeAmount | number }}</td>
+          <td>Rs{{ winner.commissionDeducted | number }}</td>
+          <td><strong>Rs{{ winner.netAmount | number }}</strong></td>
+          <td><span class="badge">{{ winner.selectionType }}</span></td>
+          <td>{{ winner.wonDate | date:'dd/MM/yyyy' }}</td>
+          <td class="actions">
+            <button class="edit-btn" (click)="openEdit(winner)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button class="delete-btn" (click)="delete(winner.id!)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="filteredWinners.length === 0">
+          <td colspan="10" class="empty">No winners found.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Form Modal -->
+  <div class="modal-overlay" *ngIf="showForm">
+    <div class="modal">
+      <h3>{{ isEdit ? 'Edit Winner' : 'Add Winner' }}</h3>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Customer*</label>
+          <select [(ngModel)]="form.customerId">
+            <option value="0" disabled>Select Customer</option>
+            <option *ngFor="let c of customers" [value]="c.id">
+              {{ c.fullName }}
+            </option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Chit Group*</label>
+          <select [(ngModel)]="form.chitGroupId">
+            <option value="0" disabled>Select Chit Group</option>
+            <option *ngFor="let g of chitGroups" [value]="g.id">
+              {{ g.name }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Enrollment*</label>
+          <select [(ngModel)]="form.enrollmentId">
+            <option value="0" disabled>Select Enrollment</option>
+            <option *ngFor="let e of enrollments" [value]="e.id">
+              Enrollment #{{ e.id }} — Slot {{ e.slotNumber }}
+            </option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Selection Type*</label>
+          <select [(ngModel)]="form.selectionType">
+            <option *ngFor="let type of selectionTypes" [value]="type">{{ type }}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Month Number*</label>
+          <input type="number" [(ngModel)]="form.monthNumber" placeholder="Enter month" />
+        </div>
+        <div class="form-group">
+          <label>Prize Amount*</label>
+          <input type="number" [(ngModel)]="form.prizeAmount"
+            placeholder="Enter prize amount" (input)="calculateNet()" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Commission Deducted*</label>
+          <input type="number" [(ngModel)]="form.commissionDeducted"
+            placeholder="Enter commission" (input)="calculateNet()" />
+        </div>
+        <div class="form-group">
+          <label>Net Amount</label>
+          <input type="number" [(ngModel)]="form.netAmount" readonly />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Notes</label>
+        <input type="text" [(ngModel)]="form.notes" placeholder="Enter notes (optional)" />
+      </div>
+
+      <div class="modal-actions">
+        <button class="cancel-btn" (click)="cancel()">Cancel</button>
+        <button class="save-btn" (click)="save()">
+          {{ isEdit ? 'Update' : 'Save' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm Delete -->
+  <app-confirm-dialog
+    *ngIf="showDeleteConfirm"
+    title="Delete Winner"
+    message="இந்த Winner record-ஐ delete பண்ண விரும்புகிறீர்களா?"
+    (confirmed)="confirmDelete()"
+    (cancelled)="showDeleteConfirm = false">
+  </app-confirm-dialog>
+</div>
