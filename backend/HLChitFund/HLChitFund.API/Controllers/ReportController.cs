@@ -1,4 +1,5 @@
 ﻿using HLChitFund.Application.Common.Interfaces;
+using HLChitFund.Application.DTOs.Report;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,9 +18,18 @@ public class ReportController : ControllerBase
     }
 
     [HttpGet("monthly-collection")]
-    public async Task<IActionResult> GetMonthlyCollection()
+    public async Task<IActionResult> GetMonthlyCollection(
+        [FromQuery] DateTime? fromDate,
+        [FromQuery] DateTime? toDate,
+        [FromQuery] int? chitGroupId)
     {
-        var result = await _reportService.GetMonthlyCollectionAsync();
+        var filter = new ReportFilterDto
+        {
+            FromDate = fromDate,
+            ToDate = toDate,
+            ChitGroupId = chitGroupId
+        };
+        var result = await _reportService.GetMonthlyCollectionAsync(filter);
         return Ok(result);
     }
 
@@ -41,16 +51,34 @@ public class ReportController : ControllerBase
     }
 
     [HttpGet("commission-summary")]
-    public async Task<IActionResult> GetCommissionSummary()
+    public async Task<IActionResult> GetCommissionSummary(
+        [FromQuery] DateTime? fromDate,
+        [FromQuery] DateTime? toDate,
+        [FromQuery] int? chitGroupId)
     {
-        var result = await _reportService.GetCommissionSummaryAsync();
+        var filter = new ReportFilterDto
+        {
+            FromDate = fromDate,
+            ToDate = toDate,
+            ChitGroupId = chitGroupId
+        };
+        var result = await _reportService.GetCommissionSummaryAsync(filter);
         return Ok(result);
     }
 
     [HttpGet("winner-summary")]
-    public async Task<IActionResult> GetWinnerSummary()
+    public async Task<IActionResult> GetWinnerSummary(
+        [FromQuery] DateTime? fromDate,
+        [FromQuery] DateTime? toDate,
+        [FromQuery] int? chitGroupId)
     {
-        var result = await _reportService.GetWinnerSummaryAsync();
+        var filter = new ReportFilterDto
+        {
+            FromDate = fromDate,
+            ToDate = toDate,
+            ChitGroupId = chitGroupId
+        };
+        var result = await _reportService.GetWinnerSummaryAsync(filter);
         return Ok(result);
     }
 }

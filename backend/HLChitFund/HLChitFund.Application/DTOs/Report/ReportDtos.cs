@@ -75,3 +75,11 @@ public class WinnerSummaryDto
     public string SelectionType { get; set; } = string.Empty;
     public DateTime WonDate { get; set; }
 }
+
+public class ReportFilterDto
+{
+    public DateTime? FromDate { get; set; }
+    public DateTime? ToDate { get; set; }
+    public int? ChitGroupId { get; set; }
+    public int? CustomerId { get; set; }
+}

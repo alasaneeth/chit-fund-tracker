@@ -18,12 +18,24 @@ public class ReportService : IReportService
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<IEnumerable<MonthlyCollectionDto>> GetMonthlyCollectionAsync()
+    public async Task<IEnumerable<MonthlyCollectionDto>> GetMonthlyCollectionAsync(
+    ReportFilterDto filter)
     {
         var payments = await _unitOfWork.Payments
             .GetAllAsync(p => p.Enrollment);
 
-        var grouped = payments
+        var filtered = payments.AsEnumerable();
+
+        if (filter.FromDate.HasValue)
+            filtered = filtered.Where(p => p.PaidDate >= filter.FromDate.Value);
+
+        if (filter.ToDate.HasValue)
+            filtered = filtered.Where(p => p.PaidDate <= filter.ToDate.Value);
+
+        if (filter.ChitGroupId.HasValue)
+            filtered = filtered.Where(p => p.Enrollment.ChitGroupId == filter.ChitGroupId.Value);
+
+        var grouped = filtered
             .GroupBy(p => new { p.PaidDate.Year, p.PaidDate.Month })
             .Select(g => new MonthlyCollectionDto
             {
@@ -40,6 +52,7 @@ public class ReportService : IReportService
 
         return grouped;
     }
+
 
     public async Task<IEnumerable<ChitGroupSummaryDto>> GetChitGroupSummaryAsync()
     {
@@ -112,12 +125,24 @@ public class ReportService : IReportService
         };
     }
 
-    public async Task<IEnumerable<CommissionSummaryDto>> GetCommissionSummaryAsync()
+    public async Task<IEnumerable<CommissionSummaryDto>> GetCommissionSummaryAsync(
+     ReportFilterDto filter)
     {
         var commissions = await _unitOfWork.Commissions
             .GetAllAsync(c => c.ChitGroup);
 
-        return commissions.Select(c => new CommissionSummaryDto
+        var filtered = commissions.AsEnumerable();
+
+        if (filter.FromDate.HasValue)
+            filtered = filtered.Where(c => c.RecordedDate >= filter.FromDate.Value);
+
+        if (filter.ToDate.HasValue)
+            filtered = filtered.Where(c => c.RecordedDate <= filter.ToDate.Value);
+
+        if (filter.ChitGroupId.HasValue)
+            filtered = filtered.Where(c => c.ChitGroupId == filter.ChitGroupId.Value);
+
+        return filtered.Select(c => new CommissionSummaryDto
         {
             ChitGroupId = c.ChitGroupId,
             ChitGroupName = c.ChitGroup?.Name ?? string.Empty,
@@ -128,13 +153,24 @@ public class ReportService : IReportService
             RecordedDate = c.RecordedDate
         });
     }
-
-    public async Task<IEnumerable<WinnerSummaryDto>> GetWinnerSummaryAsync()
+    public async Task<IEnumerable<WinnerSummaryDto>> GetWinnerSummaryAsync(
+     ReportFilterDto filter)
     {
         var winners = await _unitOfWork.Winners
             .GetAllAsync(w => w.Customer, w => w.ChitGroup);
 
-        return winners.Select(w => new WinnerSummaryDto
+        var filtered = winners.AsEnumerable();
+
+        if (filter.FromDate.HasValue)
+            filtered = filtered.Where(w => w.WonDate >= filter.FromDate.Value);
+
+        if (filter.ToDate.HasValue)
+            filtered = filtered.Where(w => w.WonDate <= filter.ToDate.Value);
+
+        if (filter.ChitGroupId.HasValue)
+            filtered = filtered.Where(w => w.ChitGroupId == filter.ChitGroupId.Value);
+
+        return filtered.Select(w => new WinnerSummaryDto
         {
             ChitGroupId = w.ChitGroupId,
             ChitGroupName = w.ChitGroup?.Name ?? string.Empty,
