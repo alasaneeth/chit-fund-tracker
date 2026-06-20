@@ -27,6 +27,7 @@ builder.Services.AddScoped<IChitGroupService, ChitGroupService>();
 builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IWinnerService, WinnerService>();
+builder.Services.AddScoped<IReportService, ReportService>();
 
 // JWT Authentication
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
