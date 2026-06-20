@@ -1,0 +1,185 @@
+<div class="reports-page">
+  <div class="page-header">
+    <h2>Reports</h2>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button [class.active]="activeTab === 'monthly'" (click)="setTab('monthly')">
+      <mat-icon>calendar_month</mat-icon> Monthly Collection
+    </button>
+    <button [class.active]="activeTab === 'groups'" (click)="setTab('groups')">
+      <mat-icon>group_work</mat-icon> Chit Group Summary
+    </button>
+    <button [class.active]="activeTab === 'commission'" (click)="setTab('commission')">
+      <mat-icon>account_balance_wallet</mat-icon> Commission
+    </button>
+    <button [class.active]="activeTab === 'winners'" (click)="setTab('winners')">
+      <mat-icon>emoji_events</mat-icon> Winners
+    </button>
+  </div>
+
+  <!-- Filters -->
+  <div class="filter-bar" *ngIf="activeTab !== 'groups'">
+    <div class="filter-group">
+      <label>From Date</label>
+      <input type="date" [(ngModel)]="fromDate" />
+    </div>
+    <div class="filter-group">
+      <label>To Date</label>
+      <input type="date" [(ngModel)]="toDate" />
+    </div>
+    <div class="filter-group">
+      <label>Chit Group</label>
+      <select [(ngModel)]="selectedChitGroupId">
+        <option value="">All Groups</option>
+        <option *ngFor="let g of chitGroups" [value]="g.id">{{ g.name }}</option>
+      </select>
+    </div>
+    <button class="apply-btn" (click)="applyFilter()">
+      <mat-icon>filter_alt</mat-icon> Apply
+    </button>
+  </div>
+
+  <!-- Monthly Collection Tab -->
+  <div *ngIf="activeTab === 'monthly'">
+    <div class="summary-banner">
+      <mat-icon>payments</mat-icon>
+      <span>Total Collected: <strong>Rs{{ totalCollectedSum | number }}</strong></span>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Month</th>
+            <th>Year</th>
+            <th>Total Collected</th>
+            <th>Total Payments</th>
+            <th>Late Payments</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let m of monthlyCollection">
+            <td>{{ m.monthName }}</td>
+            <td>{{ m.year }}</td>
+            <td>Rs{{ m.totalCollected | number }}</td>
+            <td>{{ m.totalPayments }}</td>
+            <td>
+              <span class="badge" [ngClass]="m.latePayments > 0 ? 'late' : 'ontime'">
+                {{ m.latePayments }}
+              </span>
+            </td>
+          </tr>
+          <tr *ngIf="monthlyCollection.length === 0">
+            <td colspan="5" class="empty">No data found.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Chit Group Summary Tab -->
+  <div *ngIf="activeTab === 'groups'">
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Group Name</th>
+            <th>Type</th>
+            <th>Total Amount</th>
+            <th>Members</th>
+            <th>Enrolled</th>
+            <th>Collected</th>
+            <th>Winners</th>
+            <th>Commission</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let g of chitGroupSummary">
+            <td>{{ g.chitGroupName }}</td>
+            <td><span class="badge type">{{ g.chitType }}</span></td>
+            <td>Rs{{ g.totalAmount | number }}</td>
+            <td>{{ g.totalMembers }}</td>
+            <td>{{ g.enrolledMembers }}</td>
+            <td>Rs{{ g.totalCollected | number }}</td>
+            <td>{{ g.totalWinners }}</td>
+            <td>Rs{{ g.totalCommission | number }}</td>
+          </tr>
+          <tr *ngIf="chitGroupSummary.length === 0">
+            <td colspan="8" class="empty">No data found.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Commission Summary Tab -->
+  <div *ngIf="activeTab === 'commission'">
+    <div class="summary-banner">
+      <mat-icon>account_balance_wallet</mat-icon>
+      <span>Total Commission: <strong>Rs{{ totalCommissionSum | number }}</strong></span>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Chit Group</th>
+            <th>Month</th>
+            <th>Total Amount</th>
+            <th>Rate (%)</th>
+            <th>Commission</th>
+            <th>Recorded Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let c of commissionSummary">
+            <td>{{ c.chitGroupName }}</td>
+            <td>{{ c.monthNumber }}</td>
+            <td>Rs{{ c.totalAmount | number }}</td>
+            <td>{{ c.commissionRate }}%</td>
+            <td>Rs{{ c.commissionAmount | number }}</td>
+            <td>{{ c.recordedDate | date:'dd/MM/yyyy' }}</td>
+          </tr>
+          <tr *ngIf="commissionSummary.length === 0">
+            <td colspan="6" class="empty">No data found.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Winner Summary Tab -->
+  <div *ngIf="activeTab === 'winners'">
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Chit Group</th>
+            <th>Customer</th>
+            <th>Month</th>
+            <th>Prize Amount</th>
+            <th>Commission</th>
+            <th>Net Amount</th>
+            <th>Selection Type</th>
+            <th>Won Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let w of winnerSummary">
+            <td>{{ w.chitGroupName }}</td>
+            <td>{{ w.customerName }}</td>
+            <td>{{ w.monthNumber }}</td>
+            <td>Rs{{ w.prizeAmount | number }}</td>
+            <td>Rs{{ w.commissionDeducted | number }}</td>
+            <td><strong>Rs{{ w.netAmount | number }}</strong></td>
+            <td><span class="badge type">{{ w.selectionType }}</span></td>
+            <td>{{ w.wonDate | date:'dd/MM/yyyy' }}</td>
+          </tr>
+          <tr *ngIf="winnerSummary.length === 0">
+            <td colspan="8" class="empty">No data found.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
