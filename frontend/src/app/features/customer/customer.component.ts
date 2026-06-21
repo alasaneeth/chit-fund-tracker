@@ -1,3 +1,4 @@
+import { AuthService } from './../../core/services/auth.service';
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -39,8 +40,13 @@ export class CustomerComponent implements OnInit {
   constructor(
     private http: HttpClient,
     private toastService: ToastService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+     private authService: AuthService
   ) {}
+
+  get isAdmin(): boolean {
+  return this.authService.getRole() === 'Admin';
+}
 
   ngOnInit(): void {
     this.loadCustomers();
