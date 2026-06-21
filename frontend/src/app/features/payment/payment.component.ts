@@ -6,6 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { ToastService } from '../../core/services/toast.service';
 import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dialog.component';
+import { AuthService } from '../../core/services/auth.service';
 
 interface Payment {
   id?: number;
@@ -57,8 +58,14 @@ export class PaymentComponent implements OnInit {
   constructor(
     private http: HttpClient,
     private toastService: ToastService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private authService: AuthService
   ) {}
+
+     get isAdmin(): boolean {
+  return this.authService.getRole() === 'Admin';
+}
+
 
   ngOnInit(): void {
     this.loadPayments();
