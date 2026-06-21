@@ -29,7 +29,7 @@
           <th>Mode</th>
           <th>Paid Date</th>
           <th>Late</th>
-          <th>Actions</th>
+          <th *ngIf="isAdmin" >Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -47,7 +47,7 @@
               {{ payment.isLate ? 'Late' : 'On Time' }}
             </span>
           </td>
-          <td class="actions">
+          <td *ngIf="isAdmin" class="actions">
             <button class="edit-btn" (click)="openEdit(payment)">
               <mat-icon>edit</mat-icon>
             </button>

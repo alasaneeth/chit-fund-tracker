@@ -27,7 +27,7 @@
           <th>Join Date</th>
           <th>Status</th>
           <th>Won</th>
-          <th>Actions</th>
+          <th *ngIf="isAdmin">Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -47,7 +47,7 @@
               {{ enrollment.hasWon ? 'Won' : 'Pending' }}
             </span>
           </td>
-          <td class="actions">
+          <td *ngIf="isAdmin" class="actions">
             <button class="edit-btn" (click)="openEdit(enrollment)">
               <mat-icon>edit</mat-icon>
             </button>
