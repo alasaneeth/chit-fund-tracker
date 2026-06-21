@@ -1,7 +1,7 @@
 <div class="chit-group-page">
   <div class="page-header">
     <h2>Chit Groups</h2>
-    <button class="add-btn" (click)="openAdd()">
+    <button *ngIf="isAdmin" class="add-btn" (click)="openAdd()">
       <mat-icon>add_circle</mat-icon>
       Add Chit Group
     </button>
@@ -9,11 +9,7 @@
 
   <div class="search-bar">
     <mat-icon>search</mat-icon>
-    <input
-      type="text"
-      placeholder="Search by name..."
-      [(ngModel)]="searchText"
-    />
+    <input type="text" placeholder="Search by name..." [(ngModel)]="searchText" />
   </div>
 
   <div class="table-container">
@@ -28,7 +24,7 @@
           <th>Members</th>
           <th>Duration</th>
           <th>Start Date</th>
-          <th>Actions</th>
+          <th *ngIf="isAdmin" >Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -42,10 +38,10 @@
           <td>{{ group.durationMonths }} months</td>
           <td>{{ group.startDate | date:'dd/MM/yyyy' }}</td>
           <td class="actions">
-            <button class="edit-btn" (click)="openEdit(group)">
+            <button *ngIf="isAdmin" class="edit-btn" (click)="openEdit(group)">
               <mat-icon>edit</mat-icon>
             </button>
-            <button class="delete-btn" (click)="delete(group.id!)">
+            <button *ngIf="isAdmin" class="delete-btn" (click)="delete(group.id!)">
               <mat-icon>delete</mat-icon>
             </button>
           </td>
@@ -116,11 +112,8 @@
   </div>
 
   <!-- Confirm Delete -->
-  <app-confirm-dialog
-    *ngIf="showDeleteConfirm"
-    title="Delete Chit Group"
-    message="இந்த Chit Group-ஐ delete பண்ண விரும்புகிறீர்களா?"
-    (confirmed)="confirmDelete()"
+  <app-confirm-dialog *ngIf="showDeleteConfirm" title="Delete Chit Group"
+    message="இந்த Chit Group-ஐ delete பண்ண விரும்புகிறீர்களா?" (confirmed)="confirmDelete()"
     (cancelled)="showDeleteConfirm = false">
   </app-confirm-dialog>
 </div>

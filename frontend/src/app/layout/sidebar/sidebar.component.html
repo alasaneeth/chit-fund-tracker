@@ -9,27 +9,33 @@
       <mat-icon>dashboard</mat-icon>
       <span>Dashboard</span>
     </a>
-    <a routerLink="/chit-group" routerLinkActive="active" class="nav-item">
+
+    <a *ngIf="isAdminOrCashier" routerLink="/chit-group" routerLinkActive="active" class="nav-item">
       <mat-icon>group_work</mat-icon>
       <span>Chit Groups</span>
     </a>
-    <a routerLink="/customer" routerLinkActive="active" class="nav-item">
+
+    <a *ngIf="isAdminOrCashier" routerLink="/customer" routerLinkActive="active" class="nav-item">
       <mat-icon>people</mat-icon>
       <span>Customers</span>
     </a>
-    <a routerLink="/payment" routerLinkActive="active" class="nav-item">
+
+    <a *ngIf="isAdminOrCashier" routerLink="/payment" routerLinkActive="active" class="nav-item">
       <mat-icon>payments</mat-icon>
       <span>Payments</span>
     </a>
-    <a routerLink="/enrollment" routerLinkActive="active" class="nav-item">
+
+    <a *ngIf="isAdmin" routerLink="/enrollment" routerLinkActive="active" class="nav-item">
       <mat-icon>how_to_reg</mat-icon>
       <span>Enrollments</span>
     </a>
-    <a routerLink="/winner" routerLinkActive="active" class="nav-item">
+
+    <a *ngIf="isAdmin" routerLink="/winner" routerLinkActive="active" class="nav-item">
       <mat-icon>emoji_events</mat-icon>
       <span>Winners</span>
     </a>
-       <a routerLink="/reports" routerLinkActive="active" class="nav-item">
+
+    <a *ngIf="isAdmin" routerLink="/reports" routerLinkActive="active" class="nav-item">
       <mat-icon>bar_chart</mat-icon>
       <span>Reports</span>
     </a>

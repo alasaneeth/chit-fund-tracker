@@ -25,7 +25,7 @@
           <th>Email</th>
           <th>Phone</th>
           <th>Address</th>
-          <th>Actions</th>
+          <th *ngIf="isAdmin" >Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -35,7 +35,7 @@
           <td>{{ customer.email }}</td>
           <td>{{ customer.phone }}</td>
           <td>{{ customer.address }}</td>
-          <td class="actions">
+          <td *ngIf="isAdmin" class="actions">
             <button class="edit-btn" (click)="openEdit(customer)">
               <mat-icon>edit</mat-icon>
             </button>
