@@ -78,6 +78,7 @@ export class PaymentComponent implements OnInit {
         this.payments = Array.isArray(data) ? data : [];
         this.cdr.detectChanges();
       },
+      error: () => this.toastService.error('Failed to load payments!')
     });
   }
 

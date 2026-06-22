@@ -67,6 +67,7 @@ get isAdmin(): boolean {
         this.chitGroups = Array.isArray(data) ? data : [];
         this.cdr.detectChanges();
       },
+      error: () => this.toastService.error('Failed to load chit groups!')
     });
   }
 

@@ -58,6 +58,7 @@ export class CustomerComponent implements OnInit {
         this.customers = Array.isArray(data) ? data : [];
         this.cdr.detectChanges();
       },
+      error: () => this.toastService.error('Failed to load customers!')
     });
   }
 
