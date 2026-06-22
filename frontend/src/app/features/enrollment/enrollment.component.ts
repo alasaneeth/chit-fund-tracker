@@ -77,7 +77,6 @@ export class EnrollmentComponent implements OnInit {
         this.enrollments = Array.isArray(data) ? data : [];
         this.cdr.detectChanges();
       },
-      error: () => this.toastService.error('Failed to load enrollments!')
     });
   }
 
