@@ -9,7 +9,8 @@
 
   <div class="search-bar">
     <mat-icon>search</mat-icon>
-    <input type="text" placeholder="Search by name..." [(ngModel)]="searchText" />
+    <input type="text" placeholder="Search by name..." [(ngModel)]="searchText"  [ngModelOptions]="{standalone: true}"
+ />
   </div>
 
   <div class="table-container">
@@ -33,8 +34,8 @@
           <td>{{ group.name }}</td>
           <td><span class="badge">{{ group.chitType }}</span></td>
           <td>Rs{{ group.totalAmount | number }}</td>
-          <td>Rs{{ group.monthlyAmount | number }}</td>
-          <td>{{ group.maxMembers }}</td>
+          <td>Rs{{ group.monthlyContribution  | number }}</td>
+          <td>{{ group.totalMembers  }}</td>
           <td>{{ group.durationMonths }} months</td>
           <td>{{ group.startDate | date:'dd/MM/yyyy' }}</td>
           <td class="actions">
@@ -54,18 +55,24 @@
   </div>
 
   <!-- Form Modal -->
-  <div class="modal-overlay" *ngIf="showForm">
-    <div class="modal">
-      <h3>{{ isEdit ? 'Edit Chit Group' : 'Add Chit Group' }}</h3>
+ <!-- Form Modal -->
+<div class="modal-overlay" *ngIf="showForm">
+  <div class="modal">
+    <h3>{{ isEdit ? 'Edit Chit Group' : 'Add Chit Group' }}</h3>
 
+    <form [formGroup]="chitGroupForm">
       <div class="form-row">
         <div class="form-group">
           <label>Name*</label>
-          <input type="text" [(ngModel)]="form.name" placeholder="Enter group name" />
+          <input type="text" formControlName="name" placeholder="Enter group name" />
+          <div class="field-error" *ngIf="name.invalid && name.touched">
+            <span *ngIf="name.errors?.['required']">Name is required.</span>
+            <span *ngIf="name.errors?.['minlength']">Name must be at least 3 characters.</span>
+          </div>
         </div>
         <div class="form-group">
           <label>Chit Type*</label>
-          <select [(ngModel)]="form.chitType">
+          <select formControlName="chitType">
             <option *ngFor="let type of chitTypes" [value]="type.value">
               {{ type.label }}
             </option>
@@ -76,40 +83,60 @@
       <div class="form-row">
         <div class="form-group">
           <label>Total Amount*</label>
-          <input type="number" [(ngModel)]="form.totalAmount" placeholder="Enter total amount" />
+          <input type="number" formControlName="totalAmount" placeholder="Enter total amount" />
+          <div class="field-error" *ngIf="totalAmount.invalid && totalAmount.touched">
+            <span *ngIf="totalAmount.errors?.['required']">Total amount is required.</span>
+            <span *ngIf="totalAmount.errors?.['min']">Amount must be greater than 0.</span>
+          </div>
         </div>
         <div class="form-group">
           <label>Monthly Contribution*</label>
-          <input type="number" [(ngModel)]="form.monthlyAmount" placeholder="Enter monthly amount" />
+          <input type="number" formControlName="monthlyContribution" placeholder="Enter monthly amount" />
+          <div class="field-error" *ngIf="monthlyContribution.invalid && monthlyContribution.touched">
+            <span *ngIf="monthlyContribution.errors?.['required']">Monthly contribution is required.</span>
+            <span *ngIf="monthlyContribution.errors?.['min']">Amount must be greater than 0.</span>
+          </div>
         </div>
       </div>
 
       <div class="form-row">
         <div class="form-group">
           <label>Total Members*</label>
-          <input type="number" [(ngModel)]="form.maxMembers" placeholder="Enter total members" />
+          <input type="number" formControlName="totalMembers" placeholder="Enter total members" />
+          <div class="field-error" *ngIf="totalMembers.invalid && totalMembers.touched">
+            <span *ngIf="totalMembers.errors?.['required']">Total members is required.</span>
+            <span *ngIf="totalMembers.errors?.['min']">Must have at least 2 members.</span>
+          </div>
         </div>
         <div class="form-group">
           <label>Duration (Months)*</label>
-          <input type="number" [(ngModel)]="form.durationMonths" placeholder="Enter duration" />
+          <input type="number" formControlName="durationMonths" placeholder="Enter duration" />
+          <div class="field-error" *ngIf="durationMonths.invalid && durationMonths.touched">
+            <span *ngIf="durationMonths.errors?.['required']">Duration is required.</span>
+            <span *ngIf="durationMonths.errors?.['min']">Duration must be at least 1 month.</span>
+          </div>
         </div>
       </div>
 
       <div class="form-row">
         <div class="form-group">
           <label>Start Date*</label>
-          <input type="date" [(ngModel)]="form.startDate" />
+          <input type="date" formControlName="startDate" />
+          <div class="field-error" *ngIf="startDate.invalid && startDate.touched">
+            <span *ngIf="startDate.errors?.['required']">Start date is required.</span>
+          </div>
         </div>
       </div>
+    </form>
 
-      <div class="modal-actions">
-        <button class="cancel-btn" (click)="cancel()">Cancel</button>
-        <button class="save-btn" (click)="save()">
-          {{ isEdit ? 'Update' : 'Save' }}
-        </button>
-      </div>
+    <div class="modal-actions">
+      <button class="cancel-btn" (click)="cancel()">Cancel</button>
+      <button class="save-btn" (click)="save()">
+        {{ isEdit ? 'Update' : 'Save' }}
+      </button>
     </div>
   </div>
+</div>
 
   <!-- Confirm Delete -->
   <app-confirm-dialog *ngIf="showDeleteConfirm" title="Delete Chit Group"
