@@ -1,7 +1,6 @@
-import { AuthService } from './../../core/services/auth.service';
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import {FormsModule, FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
@@ -15,13 +14,12 @@ interface Customer {
   phone: string;
   address: string;
   aadharNumber?: string;
-  dateOfBirth?: string;
 }
 
 @Component({
   selector: 'app-customer',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatIconModule, ConfirmDialogComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, MatIconModule, ConfirmDialogComponent],
   templateUrl: './customer.component.html',
   styleUrl: './customer.component.scss'
 })
@@ -32,21 +30,24 @@ export class CustomerComponent implements OnInit {
   searchText = '';
   showDeleteConfirm = false;
   deleteId: number | null = null;
+  editId: number | null = null;
 
-  form: Customer = {
-    fullName: '', email: '', phone: '', address: '', aadharNumber: ''
-  };
+  customerForm: FormGroup;
 
   constructor(
     private http: HttpClient,
     private toastService: ToastService,
     private cdr: ChangeDetectorRef,
-     private authService: AuthService
-  ) {}
-
-  get isAdmin(): boolean {
-  return this.authService.getRole() === 'Admin';
-}
+    private fb: FormBuilder
+  ) {
+    this.customerForm = this.fb.group({
+      fullName: ['', [Validators.required, Validators.minLength(3)]],
+      email: ['', [Validators.required, Validators.email]],
+      phone: ['', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]],
+      address: ['', Validators.required],
+      aadharNumber: ['']
+    });
+  }
 
   ngOnInit(): void {
     this.loadCustomers();
@@ -57,7 +58,7 @@ export class CustomerComponent implements OnInit {
       next: (data) => {
         this.customers = Array.isArray(data) ? data : [];
         this.cdr.detectChanges();
-      },
+      }
     });
   }
 
@@ -68,40 +69,55 @@ export class CustomerComponent implements OnInit {
     );
   }
 
+  // Getter shortcuts for template
+get fullName() { return this.customerForm.get('fullName')!; }
+get email() { return this.customerForm.get('email')!; }
+get phone() { return this.customerForm.get('phone')!; }
+get address() { return this.customerForm.get('address')!; }
+get aadharNumber() { return this.customerForm.get('aadharNumber')!; }
+
   openAdd(): void {
-    this.form = { fullName: '', email: '', phone: '', address: '', aadharNumber: '' };
+    this.customerForm.reset();
     this.isEdit = false;
+    this.editId = null;
     this.showForm = true;
     this.cdr.detectChanges();
   }
 
   openEdit(customer: Customer): void {
-    this.form = { ...customer };
+    this.customerForm.patchValue(customer);
     this.isEdit = true;
+    this.editId = customer.id!;
     this.showForm = true;
     this.cdr.detectChanges();
   }
 
   save(): void {
+    if (this.customerForm.invalid) {
+      this.customerForm.markAllAsTouched();
+      this.toastService.error('Please fill all required fields correctly!');
+      return;
+    }
+
+    const formData = this.customerForm.value;
+
     if (this.isEdit) {
-      this.http.put(`${environment.apiUrl}/Customer/${this.form.id}`, this.form).subscribe({
+      this.http.put(`${environment.apiUrl}/Customer/${this.editId}`, formData).subscribe({
         next: () => {
+          this.showForm = false;
+          this.cdr.detectChanges();
           this.toastService.success('Customer updated successfully!');
           this.loadCustomers();
-          this.showForm = false;
-          this.cdr.detectChanges();
-        },
-        error: () => this.toastService.error('Failed to update customer!')
+        }
       });
     } else {
-      this.http.post(`${environment.apiUrl}/Customer`, this.form).subscribe({
+      this.http.post(`${environment.apiUrl}/Customer`, formData).subscribe({
         next: () => {
-          this.toastService.success('Customer added successfully!');
-          this.loadCustomers();
           this.showForm = false;
           this.cdr.detectChanges();
-        },
-        error: () => this.toastService.error('Failed to add customer!')
+          this.toastService.success('Customer added successfully!');
+          this.loadCustomers();
+        }
       });
     }
   }
@@ -116,12 +132,11 @@ export class CustomerComponent implements OnInit {
     if (this.deleteId) {
       this.http.delete(`${environment.apiUrl}/Customer/${this.deleteId}`).subscribe({
         next: () => {
-          this.toastService.success('Customer deleted successfully!');
-          this.loadCustomers();
           this.showDeleteConfirm = false;
           this.cdr.detectChanges();
-        },
-        error: () => this.toastService.error('Failed to delete customer!')
+          this.toastService.success('Customer deleted successfully!');
+          this.loadCustomers();
+        }
       });
     }
   }
