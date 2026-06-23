@@ -20,7 +20,7 @@ interface ChitGroupSummary {
   chitGroupName: string;
   chitType: string;
   totalAmount: number;
-  totalMembers: number;
+  maxMembers: number;
   enrolledMembers: number;
   totalCollected: number;
   totalWinners: number;
@@ -98,7 +98,6 @@ setTab(tab: 'monthly' | 'groups' | 'commission' | 'winners'): void {
   loadChitGroups(): void {
     this.http.get<ChitGroup[]>(`${environment.apiUrl}/ChitGroup`).subscribe({
       next: (data) => { this.chitGroups = data; this.cdr.detectChanges(); },
-      error: () => {}
     });
   }
 

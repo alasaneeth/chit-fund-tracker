@@ -13,6 +13,7 @@
       type="text"
       placeholder="Search by customer or chit group..."
       [(ngModel)]="searchText"
+       [ngModelOptions]="{standalone: true}"
     />
   </div>
 
@@ -64,46 +65,58 @@
   </div>
 
   <!-- Form Modal -->
-  <div class="modal-overlay" *ngIf="showForm">
-    <div class="modal">
-      <h3>{{ isEdit ? 'Edit Enrollment' : 'Add Enrollment' }}</h3>
+  <!-- Form Modal -->
+<div class="modal-overlay" *ngIf="showForm">
+  <div class="modal">
+    <h3>{{ isEdit ? 'Edit Enrollment' : 'Add Enrollment' }}</h3>
 
+    <form [formGroup]="enrollmentForm">
       <div class="form-row">
         <div class="form-group">
           <label>Customer*</label>
-          <select [(ngModel)]="form.customerId">
+          <select formControlName="customerId">
             <option value="0" disabled>Select Customer</option>
             <option *ngFor="let customer of customers" [value]="customer.id">
               {{ customer.fullName }}
             </option>
           </select>
+          <div class="field-error" *ngIf="customerId.invalid && customerId.touched">
+            <span>Please select a customer.</span>
+          </div>
         </div>
         <div class="form-group">
           <label>Chit Group*</label>
-          <select [(ngModel)]="form.chitGroupId">
+          <select formControlName="chitGroupId">
             <option value="0" disabled>Select Chit Group</option>
             <option *ngFor="let group of chitGroups" [value]="group.id">
               {{ group.name }}
             </option>
           </select>
+          <div class="field-error" *ngIf="chitGroupId.invalid && chitGroupId.touched">
+            <span>Please select a chit group.</span>
+          </div>
         </div>
       </div>
 
       <div class="form-row">
         <div class="form-group">
           <label>Slot Number*</label>
-          <input type="number" [(ngModel)]="form.slotNumber" placeholder="Enter slot number" />
+          <input type="number" formControlName="slotNumber" placeholder="Enter slot number" />
+          <div class="field-error" *ngIf="slotNumber.invalid && slotNumber.touched">
+            <span>Slot number must be greater than 0.</span>
+          </div>
         </div>
       </div>
+    </form>
 
-      <div class="modal-actions">
-        <button class="cancel-btn" (click)="cancel()">Cancel</button>
-        <button class="save-btn" (click)="save()">
-          {{ isEdit ? 'Update' : 'Save' }}
-        </button>
-      </div>
+    <div class="modal-actions">
+      <button class="cancel-btn" (click)="cancel()">Cancel</button>
+      <button class="save-btn" (click)="save()">
+        {{ isEdit ? 'Update' : 'Save' }}
+      </button>
     </div>
   </div>
+</div>
 
   <!-- Confirm Delete -->
   <app-confirm-dialog

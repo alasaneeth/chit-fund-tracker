@@ -9,11 +9,12 @@
 
   <div class="search-bar">
     <mat-icon>search</mat-icon>
-    <input
-      type="text"
-      placeholder="Search by customer, group or receipt..."
-      [(ngModel)]="searchText"
-    />
+   <input
+  type="text"
+  placeholder="Search by customer, group or receipt..."
+  [(ngModel)]="searchText"
+  [ngModelOptions]="{standalone: true}"
+/>
   </div>
 
   <div class="table-container">
@@ -64,23 +65,28 @@
   </div>
 
   <!-- Form Modal -->
-  <div class="modal-overlay" *ngIf="showForm">
-    <div class="modal">
-      <h3>{{ isEdit ? 'Edit Payment' : 'Add Payment' }}</h3>
+ <!-- Form Modal -->
+<div class="modal-overlay" *ngIf="showForm">
+  <div class="modal">
+    <h3>{{ isEdit ? 'Edit Payment' : 'Add Payment' }}</h3>
 
+    <form [formGroup]="paymentForm">
       <div class="form-row">
         <div class="form-group">
           <label>Enrollment*</label>
-          <select [(ngModel)]="form.enrollmentId">
+          <select formControlName="enrollmentId">
             <option value="0" disabled>Select Enrollment</option>
             <option *ngFor="let e of enrollments" [value]="e.id">
               Enrollment #{{ e.id }} — Slot {{ e.slotNumber }}
             </option>
           </select>
+          <div class="field-error" *ngIf="enrollmentId.invalid && enrollmentId.touched">
+            <span>Please select an enrollment.</span>
+          </div>
         </div>
         <div class="form-group">
           <label>Payment Mode*</label>
-          <select [(ngModel)]="form.paymentMode">
+          <select formControlName="paymentMode">
             <option *ngFor="let mode of paymentModes" [value]="mode">{{ mode }}</option>
           </select>
         </div>
@@ -89,27 +95,34 @@
       <div class="form-row">
         <div class="form-group">
           <label>Month Number*</label>
-          <input type="number" [(ngModel)]="form.monthNumber" placeholder="Enter month number" />
+          <input type="number" formControlName="monthNumber" placeholder="Enter month number" />
+          <div class="field-error" *ngIf="monthNumber.invalid && monthNumber.touched">
+            <span>Month number must be greater than 0.</span>
+          </div>
         </div>
         <div class="form-group">
           <label>Amount Paid*</label>
-          <input type="number" [(ngModel)]="form.amountPaid" placeholder="Enter amount" />
+          <input type="number" formControlName="amountPaid" placeholder="Enter amount" />
+          <div class="field-error" *ngIf="amountPaid.invalid && amountPaid.touched">
+            <span>Amount must be greater than 0.</span>
+          </div>
         </div>
       </div>
 
       <div class="form-group">
         <label>Notes</label>
-        <input type="text" [(ngModel)]="form.notes" placeholder="Enter notes (optional)" />
+        <input type="text" formControlName="notes" placeholder="Enter notes (optional)" />
       </div>
+    </form>
 
-      <div class="modal-actions">
-        <button class="cancel-btn" (click)="cancel()">Cancel</button>
-        <button class="save-btn" (click)="save()">
-          {{ isEdit ? 'Update' : 'Save' }}
-        </button>
-      </div>
+    <div class="modal-actions">
+      <button class="cancel-btn" (click)="cancel()">Cancel</button>
+      <button class="save-btn" (click)="save()">
+        {{ isEdit ? 'Update' : 'Save' }}
+      </button>
     </div>
   </div>
+</div>
 
   <!-- Confirm Delete -->
   <app-confirm-dialog
