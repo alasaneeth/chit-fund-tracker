@@ -1,12 +1,13 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { ToastService } from '../../core/services/toast.service';
 import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dialog.component';
 import { AuthService } from '../../core/services/auth.service';
+
 
 interface Enrollment {
   id?: number;
@@ -33,7 +34,7 @@ interface ChitGroup {
 @Component({
   selector: 'app-enrollment',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatIconModule, ConfirmDialogComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, MatIconModule, ConfirmDialogComponent],
   templateUrl: './enrollment.component.html',
   styleUrl: './enrollment.component.scss'
 })
@@ -46,24 +47,31 @@ export class EnrollmentComponent implements OnInit {
   searchText = '';
   showDeleteConfirm = false;
   deleteId: number | null = null;
+  editId: number | null = null;
 
-  form: Enrollment = {
-    customerId: 0,
-    chitGroupId: 0,
-    slotNumber: 0
-  };
+  enrollmentForm: FormGroup;
 
   constructor(
     private http: HttpClient,
     private toastService: ToastService,
     private cdr: ChangeDetectorRef,
-    private authService: AuthService
+    private authService: AuthService,
+    private fb: FormBuilder
+  ) {
+    this.enrollmentForm = this.fb.group({
+      customerId: [0, [Validators.required, Validators.min(1)]],
+      chitGroupId: [0, [Validators.required, Validators.min(1)]],
+      slotNumber: [0, [Validators.required, Validators.min(1)]]
+    });
+  }
 
-  ) {}
-
-   get isAdmin(): boolean {
+  get isAdmin(): boolean {
   return this.authService.getRole() === 'Admin';
 }
+
+  get customerId() { return this.enrollmentForm.get('customerId')!; }
+  get chitGroupId() { return this.enrollmentForm.get('chitGroupId')!; }
+  get slotNumber() { return this.enrollmentForm.get('slotNumber')!; }
 
   ngOnInit(): void {
     this.loadEnrollments();
@@ -76,28 +84,19 @@ export class EnrollmentComponent implements OnInit {
       next: (data) => {
         this.enrollments = Array.isArray(data) ? data : [];
         this.cdr.detectChanges();
-      },
-      error: () => this.toastService.error('Failed to load enrollments!')
+      }
     });
   }
 
   loadCustomers(): void {
     this.http.get<Customer[]>(`${environment.apiUrl}/Customer`).subscribe({
-      next: (data) => {
-        this.customers = Array.isArray(data) ? data : [];
-        this.cdr.detectChanges();
-      },
-      error: () => {}
+      next: (data) => { this.customers = data; this.cdr.detectChanges(); }
     });
   }
 
   loadChitGroups(): void {
     this.http.get<ChitGroup[]>(`${environment.apiUrl}/ChitGroup`).subscribe({
-      next: (data) => {
-        this.chitGroups = Array.isArray(data) ? data : [];
-        this.cdr.detectChanges();
-      },
-      error: () => {}
+      next: (data) => { this.chitGroups = data; this.cdr.detectChanges(); }
     });
   }
 
@@ -109,39 +108,47 @@ export class EnrollmentComponent implements OnInit {
   }
 
   openAdd(): void {
-    this.form = { customerId: 0, chitGroupId: 0, slotNumber: 0 };
+    this.enrollmentForm.reset({ customerId: 0, chitGroupId: 0, slotNumber: 0 });
     this.isEdit = false;
+    this.editId = null;
     this.showForm = true;
     this.cdr.detectChanges();
   }
 
   openEdit(enrollment: Enrollment): void {
-    this.form = { ...enrollment };
+    this.enrollmentForm.patchValue(enrollment);
     this.isEdit = true;
+    this.editId = enrollment.id!;
     this.showForm = true;
     this.cdr.detectChanges();
   }
 
   save(): void {
+    if (this.enrollmentForm.invalid) {
+      this.enrollmentForm.markAllAsTouched();
+      this.toastService.error('Please fill all required fields correctly!');
+      return;
+    }
+
+    const formData = this.enrollmentForm.value;
+
     if (this.isEdit) {
-      this.http.put(`${environment.apiUrl}/Enrollment/${this.form.id}`, this.form).subscribe({
+      this.http.put(`${environment.apiUrl}/Enrollment/${this.editId}`, formData).subscribe({
         next: () => {
           this.showForm = false;
           this.cdr.detectChanges();
           this.toastService.success('Enrollment updated successfully!');
           this.loadEnrollments();
-        },
-        error: () => this.toastService.error('Failed to update enrollment!')
+        }
       });
     } else {
-      this.http.post(`${environment.apiUrl}/Enrollment`, this.form).subscribe({
+      this.http.post(`${environment.apiUrl}/Enrollment`, formData).subscribe({
         next: () => {
           this.showForm = false;
           this.cdr.detectChanges();
           this.toastService.success('Enrollment added successfully!');
           this.loadEnrollments();
-        },
-        error: () => this.toastService.error('Failed to add enrollment!')
+        }
       });
     }
   }
@@ -160,8 +167,7 @@ export class EnrollmentComponent implements OnInit {
           this.cdr.detectChanges();
           this.toastService.success('Enrollment deleted successfully!');
           this.loadEnrollments();
-        },
-        error: () => this.toastService.error('Failed to delete enrollment!')
+        }
       });
     }
   }

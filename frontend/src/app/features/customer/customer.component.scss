@@ -201,3 +201,11 @@
     &:hover { background: #0d47a1; }
   }
 }
+
+.field-error {
+  color: #c62828;
+  font-size: 12px;
+  margin-top: 4px;
+  display: flex;
+  flex-direction: column;
+}
