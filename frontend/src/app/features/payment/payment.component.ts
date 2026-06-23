@@ -1,12 +1,12 @@
+import { AuthService } from './../../core/services/auth.service';
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { ToastService } from '../../core/services/toast.service';
 import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dialog.component';
-import { AuthService } from '../../core/services/auth.service';
 
 interface Payment {
   id?: number;
@@ -32,7 +32,7 @@ interface Enrollment {
 @Component({
   selector: 'app-payment',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatIconModule, ConfirmDialogComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, MatIconModule, ConfirmDialogComponent],
   templateUrl: './payment.component.html',
   styleUrl: './payment.component.scss'
 })
@@ -44,28 +44,36 @@ export class PaymentComponent implements OnInit {
   searchText = '';
   showDeleteConfirm = false;
   deleteId: number | null = null;
+  editId: number | null = null;
 
   paymentModes = ['Cash', 'Online', 'Cheque', 'Bank Transfer'];
 
-  form: Payment = {
-    enrollmentId: 0,
-    monthNumber: 0,
-    amountPaid: 0,
-    paymentMode: 'Cash',
-    notes: ''
-  };
+  paymentForm: FormGroup;
 
   constructor(
     private http: HttpClient,
     private toastService: ToastService,
     private cdr: ChangeDetectorRef,
-    private authService: AuthService
-  ) {}
+    private authService:AuthService,
+    private fb: FormBuilder
+  ) {
+    this.paymentForm = this.fb.group({
+      enrollmentId: [0, [Validators.required, Validators.min(1)]],
+      monthNumber: [0, [Validators.required, Validators.min(1)]],
+      amountPaid: [0, [Validators.required, Validators.min(1)]],
+      paymentMode: ['Cash', Validators.required],
+      notes: ['']
+    });
+  }
 
-     get isAdmin(): boolean {
+get isAdmin(): boolean {
   return this.authService.getRole() === 'Admin';
 }
 
+  get enrollmentId() { return this.paymentForm.get('enrollmentId')!; }
+  get monthNumber() { return this.paymentForm.get('monthNumber')!; }
+  get amountPaid() { return this.paymentForm.get('amountPaid')!; }
+  get paymentMode() { return this.paymentForm.get('paymentMode')!; }
 
   ngOnInit(): void {
     this.loadPayments();
@@ -77,17 +85,13 @@ export class PaymentComponent implements OnInit {
       next: (data) => {
         this.payments = Array.isArray(data) ? data : [];
         this.cdr.detectChanges();
-      },
+      }
     });
   }
 
   loadEnrollments(): void {
     this.http.get<Enrollment[]>(`${environment.apiUrl}/Enrollment`).subscribe({
-      next: (data) => {
-        this.enrollments = Array.isArray(data) ? data : [];
-        this.cdr.detectChanges();
-      },
-      error: () => {}
+      next: (data) => { this.enrollments = data; this.cdr.detectChanges(); }
     });
   }
 
@@ -100,45 +104,47 @@ export class PaymentComponent implements OnInit {
   }
 
   openAdd(): void {
-    this.form = {
-      enrollmentId: 0,
-      monthNumber: 0,
-      amountPaid: 0,
-      paymentMode: 'Cash',
-      notes: ''
-    };
+    this.paymentForm.reset({ enrollmentId: 0, monthNumber: 0, amountPaid: 0, paymentMode: 'Cash', notes: '' });
     this.isEdit = false;
+    this.editId = null;
     this.showForm = true;
     this.cdr.detectChanges();
   }
 
   openEdit(payment: Payment): void {
-    this.form = { ...payment };
+    this.paymentForm.patchValue(payment);
     this.isEdit = true;
+    this.editId = payment.id!;
     this.showForm = true;
     this.cdr.detectChanges();
   }
 
   save(): void {
+    if (this.paymentForm.invalid) {
+      this.paymentForm.markAllAsTouched();
+      this.toastService.error('Please fill all required fields correctly!');
+      return;
+    }
+
+    const formData = this.paymentForm.value;
+
     if (this.isEdit) {
-      this.http.put(`${environment.apiUrl}/Payment/${this.form.id}`, this.form).subscribe({
+      this.http.put(`${environment.apiUrl}/Payment/${this.editId}`, formData).subscribe({
         next: () => {
           this.showForm = false;
           this.cdr.detectChanges();
           this.toastService.success('Payment updated successfully!');
           this.loadPayments();
-        },
-        error: () => this.toastService.error('Failed to update payment!')
+        }
       });
     } else {
-      this.http.post(`${environment.apiUrl}/Payment`, this.form).subscribe({
+      this.http.post(`${environment.apiUrl}/Payment`, formData).subscribe({
         next: () => {
           this.showForm = false;
           this.cdr.detectChanges();
           this.toastService.success('Payment added successfully!');
           this.loadPayments();
-        },
-        error: () => this.toastService.error('Failed to add payment!')
+        }
       });
     }
   }
@@ -157,8 +163,7 @@ export class PaymentComponent implements OnInit {
           this.cdr.detectChanges();
           this.toastService.success('Payment deleted successfully!');
           this.loadPayments();
-        },
-        error: () => this.toastService.error('Failed to delete payment!')
+        }
       });
     }
   }
