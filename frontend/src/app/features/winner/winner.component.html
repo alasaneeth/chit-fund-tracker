@@ -9,11 +9,12 @@
 
   <div class="search-bar">
     <mat-icon>search</mat-icon>
-    <input
-      type="text"
-      placeholder="Search by customer, group or type..."
-      [(ngModel)]="searchText"
-    />
+   <input
+  type="text"
+  placeholder="Search by customer, group or type..."
+  [(ngModel)]="searchText"
+  [ngModelOptions]="{standalone: true}"
+/>
   </div>
 
   <div class="table-container">
@@ -60,44 +61,55 @@
   </div>
 
   <!-- Form Modal -->
-  <div class="modal-overlay" *ngIf="showForm">
-    <div class="modal">
-      <h3>{{ isEdit ? 'Edit Winner' : 'Add Winner' }}</h3>
+ <!-- Form Modal -->
+<div class="modal-overlay" *ngIf="showForm">
+  <div class="modal">
+    <h3>{{ isEdit ? 'Edit Winner' : 'Add Winner' }}</h3>
 
+    <form [formGroup]="winnerForm">
       <div class="form-row">
         <div class="form-group">
           <label>Customer*</label>
-          <select [(ngModel)]="form.customerId">
+          <select formControlName="customerId">
             <option value="0" disabled>Select Customer</option>
             <option *ngFor="let c of customers" [value]="c.id">
               {{ c.fullName }}
             </option>
           </select>
+          <div class="field-error" *ngIf="customerId.invalid && customerId.touched">
+            <span>Please select a customer.</span>
+          </div>
         </div>
         <div class="form-group">
           <label>Chit Group*</label>
-          <select [(ngModel)]="form.chitGroupId">
+          <select formControlName="chitGroupId">
             <option value="0" disabled>Select Chit Group</option>
             <option *ngFor="let g of chitGroups" [value]="g.id">
               {{ g.name }}
             </option>
           </select>
+          <div class="field-error" *ngIf="chitGroupId.invalid && chitGroupId.touched">
+            <span>Please select a chit group.</span>
+          </div>
         </div>
       </div>
 
       <div class="form-row">
         <div class="form-group">
           <label>Enrollment*</label>
-          <select [(ngModel)]="form.enrollmentId">
+          <select formControlName="enrollmentId">
             <option value="0" disabled>Select Enrollment</option>
             <option *ngFor="let e of enrollments" [value]="e.id">
               Enrollment #{{ e.id }} — Slot {{ e.slotNumber }}
             </option>
           </select>
+          <div class="field-error" *ngIf="enrollmentId.invalid && enrollmentId.touched">
+            <span>Please select an enrollment.</span>
+          </div>
         </div>
         <div class="form-group">
           <label>Selection Type*</label>
-          <select [(ngModel)]="form.selectionType">
+          <select formControlName="selectionType">
             <option *ngFor="let type of selectionTypes" [value]="type">{{ type }}</option>
           </select>
         </div>
@@ -106,41 +118,47 @@
       <div class="form-row">
         <div class="form-group">
           <label>Month Number*</label>
-          <input type="number" [(ngModel)]="form.monthNumber" placeholder="Enter month" />
+          <input type="number" formControlName="monthNumber" placeholder="Enter month" />
+          <div class="field-error" *ngIf="monthNumber.invalid && monthNumber.touched">
+            <span>Month number must be greater than 0.</span>
+          </div>
         </div>
         <div class="form-group">
           <label>Prize Amount*</label>
-          <input type="number" [(ngModel)]="form.prizeAmount"
+          <input type="number" formControlName="prizeAmount"
             placeholder="Enter prize amount" (input)="calculateNet()" />
+          <div class="field-error" *ngIf="prizeAmount.invalid && prizeAmount.touched">
+            <span>Prize amount must be greater than 0.</span>
+          </div>
         </div>
       </div>
 
       <div class="form-row">
         <div class="form-group">
-          <label>Commission Deducted*</label>
-          <input type="number" [(ngModel)]="form.commissionDeducted"
+          <label>Commission Deducted</label>
+          <input type="number" formControlName="commissionDeducted"
             placeholder="Enter commission" (input)="calculateNet()" />
         </div>
         <div class="form-group">
           <label>Net Amount</label>
-          <input type="number" [(ngModel)]="form.netAmount" readonly />
+          <input type="number" formControlName="netAmount" readonly />
         </div>
       </div>
 
       <div class="form-group">
         <label>Notes</label>
-        <input type="text" [(ngModel)]="form.notes" placeholder="Enter notes (optional)" />
+        <input type="text" formControlName="notes" placeholder="Enter notes (optional)" />
       </div>
+    </form>
 
-      <div class="modal-actions">
-        <button class="cancel-btn" (click)="cancel()">Cancel</button>
-        <button class="save-btn" (click)="save()">
-          {{ isEdit ? 'Update' : 'Save' }}
-        </button>
-      </div>
+    <div class="modal-actions">
+      <button class="cancel-btn" (click)="cancel()">Cancel</button>
+      <button class="save-btn" (click)="save()">
+        {{ isEdit ? 'Update' : 'Save' }}
+      </button>
     </div>
   </div>
-
+</div>
   <!-- Confirm Delete -->
   <app-confirm-dialog
     *ngIf="showDeleteConfirm"

@@ -1,6 +1,7 @@
+import { AuthService } from './../../core/services/auth.service';
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
@@ -43,7 +44,7 @@ interface Enrollment {
 @Component({
   selector: 'app-winner',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatIconModule, ConfirmDialogComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, MatIconModule, ConfirmDialogComponent],
   templateUrl: './winner.component.html',
   styleUrl: './winner.component.scss'
 })
@@ -60,23 +61,40 @@ export class WinnerComponent implements OnInit {
 
   selectionTypes = ['Lottery', 'Auction', 'Fixed'];
 
-  form: Winner = {
-    chitGroupId: 0,
-    customerId: 0,
-    enrollmentId: 0,
-    monthNumber: 0,
-    prizeAmount: 0,
-    commissionDeducted: 0,
-    netAmount: 0,
-    selectionType: 'Lottery',
-    notes: ''
-  };
+  winnerForm: FormGroup;
 
   constructor(
     private http: HttpClient,
     private toastService: ToastService,
-    private cdr: ChangeDetectorRef
-  ) {}
+    private cdr: ChangeDetectorRef,
+    private authService: AuthService,
+    private fb: FormBuilder
+  ) {
+    this.winnerForm = this.fb.group({
+      chitGroupId: [0, [Validators.required, Validators.min(1)]],
+      customerId: [0, [Validators.required, Validators.min(1)]],
+      enrollmentId: [0, [Validators.required, Validators.min(1)]],
+      monthNumber: [0, [Validators.required, Validators.min(1)]],
+      prizeAmount: [0, [Validators.required, Validators.min(1)]],
+      commissionDeducted: [0],
+      netAmount: [0],
+      selectionType: ['Lottery', Validators.required],
+      notes: ['']
+    });
+  }
+
+   get isAdmin(): boolean {
+  return this.authService.getRole() === 'Admin';
+}
+
+
+  get chitGroupId() { return this.winnerForm.get('chitGroupId')!; }
+  get customerId() { return this.winnerForm.get('customerId')!; }
+  get enrollmentId() { return this.winnerForm.get('enrollmentId')!; }
+  get monthNumber() { return this.winnerForm.get('monthNumber')!; }
+  get prizeAmount() { return this.winnerForm.get('prizeAmount')!; }
+  get commissionDeducted() { return this.winnerForm.get('commissionDeducted')!; }
+  get netAmount() { return this.winnerForm.get('netAmount')!; }
 
   ngOnInit(): void {
     this.loadWinners();
@@ -90,29 +108,25 @@ export class WinnerComponent implements OnInit {
       next: (data) => {
         this.winners = Array.isArray(data) ? data : [];
         this.cdr.detectChanges();
-      },
-      error: () => this.toastService.error('Failed to load winners!')
+      }
     });
   }
 
   loadCustomers(): void {
     this.http.get<Customer[]>(`${environment.apiUrl}/Customer`).subscribe({
-      next: (data) => { this.customers = data; this.cdr.detectChanges(); },
-      error: () => {}
+      next: (data) => { this.customers = data; this.cdr.detectChanges(); }
     });
   }
 
   loadChitGroups(): void {
     this.http.get<ChitGroup[]>(`${environment.apiUrl}/ChitGroup`).subscribe({
-      next: (data) => { this.chitGroups = data; this.cdr.detectChanges(); },
-      error: () => {}
+      next: (data) => { this.chitGroups = data; this.cdr.detectChanges(); }
     });
   }
 
   loadEnrollments(): void {
     this.http.get<Enrollment[]>(`${environment.apiUrl}/Enrollment`).subscribe({
-      next: (data) => { this.enrollments = data; this.cdr.detectChanges(); },
-      error: () => {}
+      next: (data) => { this.enrollments = data; this.cdr.detectChanges(); }
     });
   }
 
@@ -125,53 +139,61 @@ export class WinnerComponent implements OnInit {
   }
 
   openAdd(): void {
-    this.form = {
+    this.winnerForm.reset({
       chitGroupId: 0, customerId: 0, enrollmentId: 0,
       monthNumber: 0, prizeAmount: 0, commissionDeducted: 0,
       netAmount: 0, selectionType: 'Lottery', notes: ''
-    };
+    });
     this.isEdit = false;
     this.showForm = true;
     this.cdr.detectChanges();
   }
 
   openEdit(winner: Winner): void {
-    this.form = { ...winner };
+    this.winnerForm.patchValue(winner);
     this.isEdit = true;
     this.showForm = true;
     this.cdr.detectChanges();
   }
 
   calculateNet(): void {
-    this.form.netAmount = this.form.prizeAmount - this.form.commissionDeducted;
+    const prize = this.prizeAmount.value || 0;
+    const commission = this.commissionDeducted.value || 0;
+    this.netAmount.setValue(prize - commission);
   }
 
-save(): void {
-  const payload = {
-    chitGroupId: Number(this.form.chitGroupId),
-    customerId: Number(this.form.customerId),
-    enrollmentId: Number(this.form.enrollmentId),
-    monthNumber: Number(this.form.monthNumber),
-    prizeAmount: Number(this.form.prizeAmount),
-    selectionType: this.form.selectionType,
-    notes: this.form.notes
-  };
+  save(): void {
+    if (this.isEdit) {
+      this.toastService.warning('Winner edit is not supported!');
+      return;
+    }
 
-  if (this.isEdit) {
-    this.toastService.warning('Winner edit is not supported!');
-    return;
+    if (this.winnerForm.invalid) {
+      this.winnerForm.markAllAsTouched();
+      this.toastService.error('Please fill all required fields correctly!');
+      return;
+    }
+
+    const formValue = this.winnerForm.value;
+    const payload = {
+      chitGroupId: Number(formValue.chitGroupId),
+      customerId: Number(formValue.customerId),
+      enrollmentId: Number(formValue.enrollmentId),
+      monthNumber: Number(formValue.monthNumber),
+      prizeAmount: Number(formValue.prizeAmount),
+      selectionType: formValue.selectionType,
+      notes: formValue.notes
+    };
+
+    this.http.post(`${environment.apiUrl}/Winner/select`, payload).subscribe({
+      next: () => {
+        this.showForm = false;
+        this.cdr.detectChanges();
+        this.toastService.success('Winner selected successfully!');
+        this.loadWinners();
+      }
+    });
   }
-
-  this.http.post(`${environment.apiUrl}/Winner/select`, payload).subscribe({
-    next: () => {
-      this.showForm = false;
-      this.cdr.detectChanges();
-      this.toastService.success('Winner selected successfully!');
-      this.loadWinners();
-    },
-    error: () => this.toastService.error('Failed to select winner!')
-  });
-}
 
   delete(id: number): void {
     this.deleteId = id;
@@ -187,8 +209,7 @@ save(): void {
           this.cdr.detectChanges();
           this.toastService.success('Winner deleted successfully!');
           this.loadWinners();
-        },
-        error: () => this.toastService.error('Failed to delete winner!')
+        }
       });
     }
   }
