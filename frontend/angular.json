@@ -13,7 +13,7 @@
         "@schematics/angular:component": {
           "style": "scss",
           "skipTests": true,
-           "type": "component"
+          "type": "component"
         },
         "@schematics/angular:class": {
           "skipTests": true
@@ -35,7 +35,7 @@
         },
         "@schematics/angular:service": {
           "skipTests": true,
-           "type": "component"
+          "type": "service"
         }
       },
       "root": "",
@@ -93,7 +93,22 @@
             }
           },
           "defaultConfiguration": "development"
-        }
+        },
+        "test": {
+  "builder": "@angular/build:karma",
+  "options": {
+    "tsConfig": "tsconfig.spec.json",
+    "assets": [
+      {
+        "glob": "**/*",
+        "input": "public"
+      }
+    ],
+    "styles": [
+      "src/styles.scss"
+    ]
+  }
+}
       }
     }
   }
