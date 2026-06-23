@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
@@ -12,8 +12,14 @@ export class NavbarComponent implements OnInit {
   fullName = '';
   role = '';
 
+  @Output() menuToggle = new EventEmitter<void>();
+
   ngOnInit(): void {
     this.fullName = localStorage.getItem('fullName') ?? '';
     this.role = localStorage.getItem('role') ?? '';
+  }
+
+  onMenuToggle(): void {
+    this.menuToggle.emit();
   }
 }

@@ -14,7 +14,7 @@ interface ChitGroup {
   chitType: number;
   totalAmount: number;
   monthlyContribution: number;
-  totalMembers: number;
+  maxMembers: number;
   durationMonths: number;
   startDate: string;
   status: number;
@@ -56,7 +56,7 @@ export class ChitGroupComponent implements OnInit {
       chitType: [0, Validators.required],
       totalAmount: [0, [Validators.required, Validators.min(1)]],
       monthlyContribution: [0, [Validators.required, Validators.min(1)]],
-      totalMembers: [0, [Validators.required, Validators.min(2)]],
+      maxMembers: [0, [Validators.required, Validators.min(2)]],
       durationMonths: [0, [Validators.required, Validators.min(1)]],
       startDate: ['', Validators.required]
     });
@@ -70,7 +70,7 @@ export class ChitGroupComponent implements OnInit {
   get chitType() { return this.chitGroupForm.get('chitType')!; }
   get totalAmount() { return this.chitGroupForm.get('totalAmount')!; }
   get monthlyContribution() { return this.chitGroupForm.get('monthlyContribution')!; }
-  get totalMembers() { return this.chitGroupForm.get('totalMembers')!; }
+  get maxMembers() { return this.chitGroupForm.get('maxMembers')!; }
   get durationMonths() { return this.chitGroupForm.get('durationMonths')!; }
   get startDate() { return this.chitGroupForm.get('startDate')!; }
 

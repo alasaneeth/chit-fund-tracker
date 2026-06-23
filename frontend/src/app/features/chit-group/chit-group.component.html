@@ -35,7 +35,7 @@
           <td><span class="badge">{{ group.chitType }}</span></td>
           <td>Rs{{ group.totalAmount | number }}</td>
           <td>Rs{{ group.monthlyContribution  | number }}</td>
-          <td>{{ group.totalMembers  }}</td>
+          <td>{{ group.maxMembers  }}</td>
           <td>{{ group.durationMonths }} months</td>
           <td>{{ group.startDate | date:'dd/MM/yyyy' }}</td>
           <td class="actions">
@@ -102,10 +102,10 @@
       <div class="form-row">
         <div class="form-group">
           <label>Total Members*</label>
-          <input type="number" formControlName="totalMembers" placeholder="Enter total members" />
-          <div class="field-error" *ngIf="totalMembers.invalid && totalMembers.touched">
-            <span *ngIf="totalMembers.errors?.['required']">Total members is required.</span>
-            <span *ngIf="totalMembers.errors?.['min']">Must have at least 2 members.</span>
+          <input type="number" formControlName="maxMembers" placeholder="Enter total members" />
+          <div class="field-error" *ngIf="maxMembers.invalid && maxMembers.touched">
+            <span *ngIf="maxMembers.errors?.['required']">Total members is required.</span>
+            <span *ngIf="maxMembers.errors?.['min']">Must have at least 2 members.</span>
           </div>
         </div>
         <div class="form-group">

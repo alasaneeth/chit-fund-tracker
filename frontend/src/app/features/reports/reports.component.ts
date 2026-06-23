@@ -20,7 +20,7 @@ interface ChitGroupSummary {
   chitGroupName: string;
   chitType: string;
   totalAmount: number;
-  totalMembers: number;
+  maxMembers: number;
   enrolledMembers: number;
   totalCollected: number;
   totalWinners: number;

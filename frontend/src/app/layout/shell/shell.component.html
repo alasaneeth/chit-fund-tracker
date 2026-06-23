@@ -1,9 +1,12 @@
 <app-loading-spinner></app-loading-spinner>
 
 <div class="shell-container">
-  <app-sidebar></app-sidebar>
+  <app-sidebar [class.mobile-open]="sidebarOpen()"></app-sidebar>
+
+  <div class="sidebar-backdrop" *ngIf="sidebarOpen()" (click)="toggleSidebar()"></div>
+
   <div class="main-content">
-    <app-navbar></app-navbar>
+    <app-navbar (menuToggle)="toggleSidebar()"></app-navbar>
     <div class="content-area">
       <router-outlet></router-outlet>
     </div>
