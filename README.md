@@ -175,7 +175,7 @@ Full API reference available via Swagger once the backend is running.
 This project follows **Git Flow** with **Conventional Commits**:
 
 ```
-main        → production-ready, tagged releases (v1.0.0, v2.0.0, ...)
+main        → production-ready, tagged releases
 develop     → integration branch
 feature/*   → individual feature branches
 ```
