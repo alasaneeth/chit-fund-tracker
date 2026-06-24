@@ -1,4 +1,4 @@
-# 🏦 HLChitFund — Chit Fund Management System
+# 🏦 ChitFundTracker — Chit Fund Management System
 
 A full-stack **Chit Fund Management System** built to demonstrate MNC-grade, production-ready development practices across architecture, security, testing, and UX.
 
